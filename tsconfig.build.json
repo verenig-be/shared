@@ -9,6 +9,6 @@
     "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false
   },
-  "include": ["index.ts", "vue/**/*", "vue-shims.d.ts"],
+  "include": ["index.ts", "vue/**/*.ts", "vue-shims.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

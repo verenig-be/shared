@@ -2,18 +2,18 @@
   "name": "@verenig/shared",
   "version": "1.0.0",
   "description": "Shared utilities and components for Verenig projects",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "index.ts",
+  "module": "index.ts", 
   "types": "dist/index.d.ts",
   "type": "module",
   "files": [
-    "dist",
-    "css"
+    "index.ts",
+    "vue",
+    "css",
+    "dist/*.d.ts"
   ],
   "scripts": {
-    "build": "bun build index.ts --outdir=dist --target=node --minify && bun run build:types && bun run build:css",
-    "build:types": "tsc --project tsconfig.build.json",
-    "build:css": "cp -r css dist/",
+    "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "bun run build"
   },
   "keywords": ["verenig", "shared", "utilities", "vue", "typescript"],

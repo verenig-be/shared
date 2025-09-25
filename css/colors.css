@@ -1,0 +1,104 @@
+:root {
+    --clr-blue-a10: #ffffff;
+    --clr-blue-a20: #d8caff;
+    --clr-blue-a30: #ad96ff;
+    --clr-blue-a40: #7864ff;
+    --clr-blue-a50: #0a33ff;
+    --clr-blue-a60: #2228b9;
+    --clr-blue-a70: #221e78;
+    --clr-blue-a80: #19133c;
+    --clr-blue-a90: #000000;
+
+    --clr-red-a10: #ffffff;
+    --clr-red-a20: #ffd0cd;
+    --clr-red-a30: #ff9f9d;
+    --clr-red-a40: #fa6b70;
+    --clr-red-a50: #ed1d46;
+    --clr-red-a60: #ad2135;
+    --clr-red-a70: #711e25;
+    --clr-red-a80: #3a1616;
+    --clr-red-a90: #000000;
+
+    --clr-yellow-a10: #ffffff;
+    --clr-yellow-a20: #fff4d1;
+    --clr-yellow-a30: #ffeaa2;
+    --clr-yellow-a40: #fddf73;
+    --clr-yellow-a50: #f8d53a;
+    --clr-yellow-a60: #b49b30;
+    --clr-yellow-a70: #756524;
+    --clr-yellow-a80: #3b3317;
+    --clr-yellow-a90: #000000;
+
+    --clr-light-a10: #ffffff;
+    --clr-light-a20: #fafcfd;
+    --clr-light-a30: #f8fbfc;
+    --clr-light-a40: #f5fafa;
+    --clr-light-a50: #f1f8f9;
+    --clr-light-a60: #cfd5d6;
+    --clr-light-a70: #afb4b4;
+    --clr-light-a80: #8f9394;
+    --clr-light-a90: #717474;
+
+    --clr-dark-a10: #717173;
+    --clr-dark-a20: #58585a;
+    --clr-dark-a30: #3f3f42;
+    --clr-dark-a40: #28282b;
+    --clr-dark-a50: #131316;
+    --clr-dark-a60: #111114;
+    --clr-dark-a70: #0e0e10;
+    --clr-dark-a80: #0a0a0c;
+    --clr-dark-a90: #000000;
+}
+@supports (background: oklch(50% 0.1 0)) {
+    :root {
+        --clr-blue-a10: oklch(100% 0 none);
+        --clr-blue-a20: oklch(90% 0.3 264);
+        --clr-blue-a30: oklch(75% 0.35 264);
+        --clr-blue-a40: oklch(70% 0.4 264);
+        --clr-blue-a50: oklch(50% 0.4 264);
+        --clr-blue-a60: oklch(20% 0.4 264);
+        --clr-blue-a70: oklch(8% 0.33 264);
+        --clr-blue-a80: oklch(0% 0.25 264);
+        --clr-blue-a90: oklch(0% 0 none);
+
+        --clr-red-a10: oklch(100% 0 none);
+        --clr-red-a20: oklch(95% 0.32 20);
+        --clr-red-a30: oklch(88% 0.35 20);
+        --clr-red-a40: oklch(74% 0.4 20);
+        --clr-red-a50: oklch(60% 0.4 20);
+        --clr-red-a60: oklch(46% 0.4 20);
+        --clr-red-a70: oklch(35% 0.42 20);
+        --clr-red-a80: oklch(25% 0.46 20);
+        --clr-red-a90: oklch(0% 0 none);
+
+        --clr-yellow-a10: oklch(100% 0 none);
+        --clr-yellow-a20: oklch(100% 0.15 95);
+        --clr-yellow-a30: oklch(97% 0.17 95);
+        --clr-yellow-a40: oklch(93% 0.17 95);
+        --clr-yellow-a50: oklch(87% 0.17 95);
+        --clr-yellow-a60: oklch(70% 0.17 95);
+        --clr-yellow-a70: oklch(50% 0.17 95);
+        --clr-yellow-a80: oklch(20% 0.25 95);
+        --clr-yellow-a90: oklch(0% 0 none);
+
+        --clr-light-a10: oklch(100% 0 none);
+        --clr-light-a20: oklch(97% 0.006 207);
+        --clr-light-a30: oklch(95% 0.007 207);
+        --clr-light-a40: oklch(95% 0.008 207);
+        --clr-light-a50: oklch(94% 0.009 207);
+        --clr-light-a60: oklch(90% 0.01 207);
+        --clr-light-a70: oklch(83% 0.012 207);
+        --clr-light-a80: oklch(74% 0.014 207);
+        --clr-light-a90: oklch(62% 0.016 207);
+
+        --clr-dark-a10: oklch(60% 0.006 285);
+        --clr-dark-a20: oklch(45% 0.006 285);
+        --clr-dark-a30: oklch(38% 0.006 285);
+        --clr-dark-a40: oklch(30% 0.006 285);
+        --clr-dark-a50: oklch(19% 0.006 285);
+        --clr-dark-a60: oklch(15% 0.006 285);
+        --clr-dark-a70: oklch(9% 0.006 285);
+        --clr-dark-a80: oklch(6% 0.006 285);
+        --clr-dark-a90: oklch(0% 0 none);
+    }
+}

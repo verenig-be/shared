@@ -14,14 +14,10 @@ clean: ## Clean build artifacts
 	rm -rf dist/
 	@echo "✅ Cleaned build artifacts"
 
-build: clean ## Build the package for distribution
-	@echo "🔨 Building package..."
-	bun build index.ts --outdir=dist --target=node --minify
+build: clean ## Generate TypeScript declarations
 	@echo "📝 Generating TypeScript declarations..."
-	bun run build:types
-	@echo "🎨 Copying CSS files..."
-	bun run build:css
-	@echo "✅ Build complete"
+	bun run build
+	@echo "✅ Type declarations generated"
 
 dev: install ## Install dependencies and build in development mode
 	@echo "🚀 Setting up development environment..."
@@ -30,7 +26,7 @@ dev: install ## Install dependencies and build in development mode
 
 typecheck: ## Run TypeScript type checking
 	@echo "🔍 Type checking..."
-	tsc --noEmit
+	bunx tsc --noEmit
 	@echo "✅ Type check passed"
 
 lint: ## Run linting (if linter is configured)
@@ -43,17 +39,21 @@ lint: ## Run linting (if linter is configured)
 
 test: ## Run tests
 	@echo "🧪 Running tests..."
-	bun test
+	@if find . -name "*.test.*" -o -name "*.spec.*" | grep -q .; then \
+		bun test; \
+	else \
+		echo "ℹ️  No test files found"; \
+	fi
 
 verify: typecheck lint test ## Run all verification checks
 	@echo "✅ All checks passed"
 
 publish-check: build verify ## Check if package is ready for publishing
 	@echo "📦 Checking package contents..."
-	@if [ ! -d "dist" ]; then echo "❌ No dist directory found"; exit 1; fi
-	@if [ ! -f "dist/index.js" ]; then echo "❌ No main entry file found"; exit 1; fi
+	@if [ ! -f "index.ts" ]; then echo "❌ No main entry file found"; exit 1; fi
 	@if [ ! -f "dist/index.d.ts" ]; then echo "❌ No type declarations found"; exit 1; fi
-	@if [ ! -d "dist/css" ]; then echo "❌ No CSS files found"; exit 1; fi
+	@if [ ! -d "vue" ]; then echo "❌ No Vue components found"; exit 1; fi
+	@if [ ! -d "css" ]; then echo "❌ No CSS files found"; exit 1; fi
 	@echo "✅ Package is ready for publishing"
 
 publish: publish-check ## Publish to npm (with confirmation)
@@ -76,9 +76,16 @@ info: ## Show package information
 	@echo "Name: $(shell jq -r '.name' package.json)"
 	@echo "Version: $(shell jq -r '.version' package.json)"
 	@echo "Description: $(shell jq -r '.description' package.json)"
+	@echo "Main: $(shell jq -r '.main' package.json)"
 	@echo ""
 	@echo "📂 Files that will be published:"
 	@echo "$(shell jq -r '.files[]' package.json)"
+	@echo ""
+	@echo "📁 Source structure:"
+	@echo "  index.ts (main entry point)"
+	@echo "  vue/ (Vue components and composables)"
+	@echo "  css/ (stylesheets)"
+	@echo "  dist/ (TypeScript declarations)"
 
 version-patch: ## Bump patch version
 	npm version patch

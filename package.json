@@ -1,0 +1,33 @@
+{
+  "name": "@verenig/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and components for Verenig projects",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist",
+    "css"
+  ],
+  "scripts": {
+    "build": "bun build index.ts --outdir=dist --target=node --minify && bun run build:types && bun run build:css",
+    "build:types": "tsc --project tsconfig.build.json",
+    "build:css": "cp -r css dist/",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": ["verenig", "shared", "utilities", "vue", "typescript"],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/verenig-shared.git"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "vue": "^3.5"
+  }
+}

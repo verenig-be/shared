@@ -1,6 +1,6 @@
 {
   "name": "@verenig/shared",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shared utilities and components for Verenig projects",
   "type": "module",
   "exports": {
@@ -19,7 +19,13 @@
     "css"
   ],
   "scripts": {},
-  "keywords": ["verenig", "shared", "utilities", "vue", "typescript"],
+  "keywords": [
+    "verenig",
+    "shared",
+    "utilities",
+    "vue",
+    "typescript"
+  ],
   "author": "Korneel Eeckhout",
   "license": "MIT",
   "repository": {

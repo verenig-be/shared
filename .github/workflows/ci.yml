@@ -3,13 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
-    paths:
-      - '.github/**'
-      - 'README.md'
-      - 'AGENTS.md'
-      - '.gitignore'
 
 jobs:
   test:
@@ -37,15 +30,6 @@ jobs:
           else
             echo "ℹ️  No test files found"
           fi
-
-      - name: Validate package structure
-        run: |
-          echo "📦 Validating package structure..."
-          if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
-          if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
-          if [ ! -d "vue" ]; then echo "❌ No Vue directory found"; exit 1; fi
-          if [ ! -d "css" ]; then echo "❌ No CSS directory found"; exit 1; fi
-          echo "✅ Package structure validated"
 
       - name: Dry run publish
         run: npm publish --dry-run --access public

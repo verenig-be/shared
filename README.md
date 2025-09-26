@@ -2,14 +2,6 @@
 
 Shared utilities and components for Verenig projects. This package provides reusable Vue components, composables, and CSS utilities that can be directly imported into Vue applications.
 
-## Features
-
-- 🧩 **Vue Components**: Pre-built, accessible components with TypeScript support
-- 🎨 **CSS Color System**: Comprehensive color palette with modern CSS features
-- 🔧 **Composables**: Reusable Vue composition functions
-- 📦 **Source Distribution**: Components distributed as source files for maximum flexibility
-- 🎯 **TypeScript**: Full type safety through source TypeScript files
-
 ## Installation
 
 ```bash
@@ -40,128 +32,18 @@ import { useUid } from '@verenig/shared/composables'
 import '@verenig/shared/css/colors.css'
 ```
 
-### Components
-
-```vue
-<template>
-  <Field
-    v-model="email"
-    label="Email Address"
-    type="email"
-    placeholder="Enter your email"
-    help="We'll never share your email"
-    :error="emailError"
-    required
-  />
-</template>
-
-<script setup>
-import { Field } from '@verenig/shared/components'
-import { ref } from 'vue'
-
-const email = ref('')
-const emailError = ref('')
-</script>
-```
-
-### Composables
-
-```vue
-<script setup>
-import { useUid } from '@verenig/shared/composables'
-
-// Generate unique IDs for form elements
-const fieldId = useUid('field')
-const buttonId = useUid('btn', 'submit')
-</script>
-```
-
-### CSS Colors
-
-```css
-/* Import the color system */
-@import '@verenig/shared/css/colors.css';
-
-.my-component {
-  background-color: var(--clr-blue-a50);
-  color: var(--clr-light-a10);
-  border: 1px solid var(--clr-blue-a30);
-}
-
-/* Modern browsers with oklch support will automatically use better colors */
-```
-
 ## Available Components
+1. Field
 
-### Field
-
-A comprehensive form field component with built-in accessibility features.
-
-**Props:**
-- `modelValue?: string` - The input value (v-model)
-- `label?: string` - Field label text
-- `type?: string` - Input type (default: 'text')
-- `placeholder?: string` - Placeholder text
-- `help?: string` - Help text displayed below the field
-- `error?: string` - Error message to display
-- `required?: boolean` - Whether the field is required
-- `disabled?: boolean` - Whether the field is disabled
-
-**Features:**
-- Automatic unique ID generation
-- ARIA attributes for accessibility
-- Error state styling
-- Help text support
 
 ## Available Composables
 
-### useUid
+2. useUid
 
-Generates unique IDs for components, useful for form labels and ARIA attributes.
-
-```typescript
-function useUid(prefix?: string, postfix?: string): Ref<string>
-```
-
-**Parameters:**
-- `prefix?: string` - Optional prefix for the ID
-- `postfix?: string` - Optional postfix for the ID
-
-**Returns:** A reactive reference containing a unique ID string.
-
-## Color System
-
-The package includes a comprehensive color system with:
-
-- **5 Color Families**: Blue, Red, Yellow, Light, Dark
-- **10-Step Scales**: From a10 (lightest) to a90 (darkest)
-- **Modern CSS Support**: Automatic fallback from oklch() to hex colors
-- **Consistent Naming**: `--clr-{family}-a{step}` format
-
-### Color Families
-
-- `--clr-blue-*` - Primary blue colors
-- `--clr-red-*` - Error and warning colors  
-- `--clr-yellow-*` - Accent and highlight colors
-- `--clr-light-*` - Light theme colors
-- `--clr-dark-*` - Dark theme colors
 
 ## Development
 
 This project uses [Bun](https://bun.com) as the runtime and package manager.
-
-### Setup
-
-```bash
-# Install dependencies
-bun install
-
-# Run type checking
-make typecheck
-
-# Run all checks
-make verify
-```
 
 ### Available Scripts
 
@@ -289,6 +171,15 @@ If you need manual control:
 ### 📋 Requirements
 Set up this GitHub repository secret:
 - `NPM_TOKEN`: Your npm access token with publish permissions
+
+#### Setting up NPM_TOKEN:
+1. Go to [npmjs.com](https://www.npmjs.com/) → Account → Access Tokens
+2. Generate a new token with "Automation" type (allows publishing)
+3. Copy the token
+4. Go to your GitHub repository → Settings → Secrets and variables → Actions
+5. Add new repository secret:
+   - **Name**: `NPM_TOKEN`
+   - **Value**: Your npm token
 
 ### 🛡️ Safety Features
 - Skips release if commit is already a version bump

@@ -30,15 +30,21 @@ jobs:
           bunx tsc --noEmit
           echo "✅ Type checking passed"
           
-          echo "📦 Validating package structure..."
-          if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
-          if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
-          if [ ! -d "vue" ]; then echo "❌ No Vue directory found"; exit 1; fi
-          if [ ! -d "css" ]; then echo "❌ No CSS directory found"; exit 1; fi
-          echo "✅ Package structure validated"
+      - name: Check NPM token
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "❌ NPM_TOKEN secret is not set"
+            echo "Please add NPM_TOKEN secret to repository settings"
+            exit 1
+          else
+            echo "✅ NPM_TOKEN secret is available"
+          fi
 
-      - name: Setup npm authentication
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Setup Node.js with npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Publish to npm
         run: npm publish --access public

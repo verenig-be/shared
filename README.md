@@ -205,36 +205,95 @@ This package follows a **source distribution** approach:
 
 ## Contributing
 
-1. Make changes to source files in `vue/` or `css/`
-2. Run `make verify` to ensure all checks pass
-3. Commit and push your changes
-4. Create a release using GitHub Actions (see Deployment section)
+### Development Workflow
+
+```bash
+# 1. Create a feature branch (determines version bump)
+git checkout -b feat/new-select-component    # → minor release
+# or: fix/field-validation                   # → patch release  
+# or: major/redesign-api                     # → major release
+
+# 2. Make your changes
+# Edit files in vue/ or css/
+
+# 3. Verify changes locally
+make verify
+
+# 4. Commit and push
+git add .
+git commit -m "feat: add Select component with accessibility features"
+git push origin feat/new-select-component
+
+# 5. Create pull request to main
+# When merged, GitHub Actions will automatically:
+# - Detect "feat/" → minor version bump
+# - Run tests and validation  
+# - Bump version (e.g., 1.2.0 → 1.3.0)
+# - Create GitHub release
+# - Publish to npm
+```
 
 No build step required - source files are distributed directly!
 
 ## Deployment
 
-This package uses GitHub Actions for automated deployment to npm:
+This package uses GitHub Actions for automated deployment to npm with **automatic version detection**.
 
-### Automatic CI
-- **Pull requests**: Run tests and validation
-- **Push to main**: Run full CI pipeline with dry-run publish
+### 🤖 Automatic Release (Recommended)
 
-### Manual Release
-1. Go to GitHub Actions → "Version and Release" workflow
-2. Click "Run workflow" and select version bump type:
-   - **patch**: Bug fixes (1.0.0 → 1.0.1)
-   - **minor**: New features (1.0.0 → 1.1.0)  
-   - **major**: Breaking changes (1.0.0 → 2.0.0)
-3. The workflow will:
+When you merge to `main`, the version is automatically bumped based on:
+
+#### Branch Naming Convention
+```bash
+# Patch releases (1.0.0 → 1.0.1) - Bug fixes
+fix/button-styling
+hotfix/memory-leak  
+patch/typo-correction
+
+# Minor releases (1.0.0 → 1.1.0) - New features
+feat/new-component
+feature/dark-mode
+minor/api-enhancement
+
+# Major releases (1.0.0 → 2.0.0) - Breaking changes  
+major/new-architecture
+breaking/api-redesign
+```
+
+#### Conventional Commits
+Alternatively, use conventional commit messages:
+```bash
+fix: resolve button alignment issue          # → patch
+feat: add new DatePicker component          # → minor  
+feat!: redesign Field component API         # → major
+# or include "BREAKING CHANGE" in commit body
+```
+
+#### Workflow Process
+1. Create branch with appropriate name (e.g., `feat/new-button`)
+2. Make your changes and commit
+3. Create pull request to `main`
+4. When merged, GitHub Actions will:
+   - Detect version bump type from branch/commits
+   - Run all tests and validation
    - Bump version in package.json
-   - Create git tag and commit
    - Create GitHub release
-   - Automatically publish to npm
+   - Publish to npm automatically
 
-### Requirements
-Set up these GitHub repository secrets:
+### 🔧 Manual Release (Backup)
+If you need manual control:
+1. Go to GitHub Actions → "Version and Release" workflow  
+2. Click "Run workflow" and select version type
+3. Workflow handles the rest
+
+### 📋 Requirements
+Set up this GitHub repository secret:
 - `NPM_TOKEN`: Your npm access token with publish permissions
+
+### 🛡️ Safety Features
+- Skips release if commit is already a version bump
+- Full validation before publishing
+- Rollback safety with tagged releases
 
 ## License
 

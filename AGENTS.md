@@ -104,10 +104,28 @@ Test files should follow the pattern: `*.test.ts` or `*.spec.ts`
 
 ## Publishing Workflow
 
-1. Make changes to source files
-2. Run verification: `make verify`
-3. Update version: `make version-patch` (or `version-minor`/`version-major`)
-4. Publish: `make publish`
+This package uses automatic releases based on branch naming:
+
+### Branch Naming Convention
+- `fix/*`, `hotfix/*`, `patch/*` → patch release (1.0.0 → 1.0.1)
+- `feat/*`, `feature/*`, `minor/*` → minor release (1.0.0 → 1.1.0)  
+- `major/*`, `breaking/*` → major release (1.0.0 → 2.0.0)
+
+### Development Process
+1. Create branch with appropriate prefix: `git checkout -b feat/new-component`
+2. Make changes to source files
+3. Run verification: `make verify`
+4. Commit and push branch
+5. Create pull request to main
+6. When merged, GitHub Actions automatically:
+   - Detects version type from branch name
+   - Runs full validation
+   - Bumps version and creates release
+   - Publishes to npm
+
+### Manual Release (if needed)
+- Use GitHub Actions "Version and Release" workflow
+- Or use local commands: `make version-patch && make publish`
 
 ## Consumer Integration
 

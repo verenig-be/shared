@@ -27,17 +27,16 @@ yarn add @verenig/shared
 
 ### Import Methods
 
-The package provides multiple ways to import components and composables:
+The package provides targeted entry points for clean imports:
 
 ```javascript
-// Main entry point - imports everything
-import { Field, useUid } from '@verenig/shared'
-
-// Specific entry points - more targeted imports
+// Import components
 import { Field } from '@verenig/shared/components'
+
+// Import composables
 import { useUid } from '@verenig/shared/composables'
 
-// CSS imports
+// Import CSS
 import '@verenig/shared/css/colors.css'
 ```
 
@@ -57,12 +56,7 @@ import '@verenig/shared/css/colors.css'
 </template>
 
 <script setup>
-// Import from main entry point
-import { Field } from '@verenig/shared'
-
-// Or import from components entry point
 import { Field } from '@verenig/shared/components'
-
 import { ref } from 'vue'
 
 const email = ref('')
@@ -74,10 +68,6 @@ const emailError = ref('')
 
 ```vue
 <script setup>
-// Import from main entry point
-import { useUid } from '@verenig/shared'
-
-// Or import from composables entry point
 import { useUid } from '@verenig/shared/composables'
 
 // Generate unique IDs for form elements
@@ -193,7 +183,6 @@ make info
 
 ```
 @verenig/shared/
-├── index.ts              # Main entry point
 ├── vue/
 │   ├── components/
 │   │   ├── index.ts      # Components entry point

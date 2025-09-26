@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import useUid from '../composables/useUid'
+import { useUid } from '../composables'
 
 
 interface Props {

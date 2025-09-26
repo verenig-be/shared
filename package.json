@@ -2,15 +2,8 @@
   "name": "@verenig/shared",
   "version": "1.0.0",
   "description": "Shared utilities and components for Verenig projects",
-  "main": "index.ts",
-  "module": "index.ts", 
-  "types": "index.ts",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./index.ts",
-      "types": "./index.ts"
-    },
     "./components": {
       "import": "./vue/components/index.ts",
       "types": "./vue/components/index.ts"
@@ -22,7 +15,6 @@
     "./css/*": "./css/*"
   },
   "files": [
-    "index.ts",
     "vue",
     "css"
   ],

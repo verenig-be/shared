@@ -40,7 +40,8 @@ verify: typecheck lint test ## Run all verification checks
 
 publish-check: verify ## Check if package is ready for publishing
 	@echo "📦 Checking package contents..."
-	@if [ ! -f "index.ts" ]; then echo "❌ No main entry file found"; exit 1; fi
+	@if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
+	@if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
 	@if [ ! -d "vue" ]; then echo "❌ No Vue components found"; exit 1; fi
 	@if [ ! -d "css" ]; then echo "❌ No CSS files found"; exit 1; fi
 	@echo "✅ Package is ready for publishing"
@@ -71,8 +72,8 @@ info: ## Show package information
 	@echo "$(shell jq -r '.files[]' package.json)"
 	@echo ""
 	@echo "📁 Source structure:"
-	@echo "  index.ts (main entry point)"
-	@echo "  vue/ (Vue components and composables)"
+	@echo "  vue/components/ (Vue components with entry point)"
+	@echo "  vue/composables/ (Vue composables with entry point)"
 	@echo "  css/ (stylesheets)"
 
 version-patch: ## Bump patch version

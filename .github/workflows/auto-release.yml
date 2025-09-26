@@ -1,0 +1,167 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'AGENTS.md' 
+      - '.gitignore'
+      - '.github/**'
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run verification checks
+        run: |
+          bunx tsc --noEmit
+          echo "✅ All checks passed"
+
+      - name: Determine version bump type
+        id: version-type
+        run: |
+          # Get the last commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          
+          # Get branch name from the merge commit if it exists
+          BRANCH_NAME=""
+          if [[ "$COMMIT_MSG" == *"Merge pull request"* ]]; then
+            BRANCH_NAME=$(echo "$COMMIT_MSG" | grep -o 'from [^/]*/[^[:space:]]*' | cut -d'/' -f2)
+          fi
+          
+          # Determine version type - branch name takes precedence, then commit message
+          VERSION_TYPE="patch"  # default
+          
+          # First check commit message for breaking changes (highest priority)
+          if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"feat!"* ]]; then
+            VERSION_TYPE="major"
+          # Then check branch name (medium priority)
+          elif [[ "$BRANCH_NAME" == *"major"* ]] || [[ "$BRANCH_NAME" == *"breaking"* ]]; then
+            VERSION_TYPE="major"
+          elif [[ "$BRANCH_NAME" == *"feat"* ]] || [[ "$BRANCH_NAME" == *"feature"* ]] || [[ "$BRANCH_NAME" == *"minor"* ]]; then
+            VERSION_TYPE="minor"
+          elif [[ "$BRANCH_NAME" == *"fix"* ]] || [[ "$BRANCH_NAME" == *"hotfix"* ]] || [[ "$BRANCH_NAME" == *"patch"* ]]; then
+            VERSION_TYPE="patch"
+          # Finally check commit message (lowest priority)
+          elif [[ "$COMMIT_MSG" == *"feat:"* ]] || [[ "$COMMIT_MSG" == *"feat("* ]]; then
+            VERSION_TYPE="minor"
+          elif [[ "$COMMIT_MSG" == *"fix:"* ]] || [[ "$COMMIT_MSG" == *"fix("* ]]; then
+            VERSION_TYPE="patch"
+          fi
+          
+          echo "Branch name: $BRANCH_NAME"
+          echo "Commit message: $COMMIT_MSG"
+          echo "Version type: $VERSION_TYPE"
+          echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Configure git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Check if version should be bumped
+        id: should-release
+        run: |
+          # Skip if this is already a version commit
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" == *"chore(release):"* ]] || [[ "$COMMIT_MSG" == *"bump version"* ]]; then
+            echo "Skipping release - this is a version bump commit"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version
+        id: version
+        if: steps.should-release.outputs.should_release == 'true'
+        run: |
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          npm version ${{ steps.version-type.outputs.version_type }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          
+          echo "old_version=$OLD_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Bumped version: $OLD_VERSION → $NEW_VERSION (${{ steps.version-type.outputs.version_type }})"
+
+      - name: Commit version bump
+        if: steps.should-release.outputs.should_release == 'true'
+        run: |
+          git add package.json
+          git commit -m "chore(release): bump version to ${{ steps.version.outputs.new_version }}"
+          git tag "v${{ steps.version.outputs.new_version }}"
+
+      - name: Push version and tag
+        if: steps.should-release.outputs.should_release == 'true'
+        run: |
+          git push origin main --follow-tags
+
+      - name: Create GitHub Release
+        if: steps.should-release.outputs.should_release == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.new_version }}
+          release_name: Release v${{ steps.version.outputs.new_version }}
+          body: |
+            ## 🚀 Release v${{ steps.version.outputs.new_version }}
+            
+            **Version bump**: ${{ steps.version.outputs.old_version }} → ${{ steps.version.outputs.new_version }} (${{ steps.version-type.outputs.version_type }})
+            
+            ### Changes
+            - Auto-generated release from main branch
+            - Type: `${{ steps.version-type.outputs.version_type }}`
+            
+            ### Installation
+            
+            ```bash
+            bun add @verenig/shared@${{ steps.version.outputs.new_version }}
+            # or
+            npm install @verenig/shared@${{ steps.version.outputs.new_version }}
+            ```
+            
+            ### Usage
+            
+            ```javascript
+            import { Field } from '@verenig/shared/components'
+            import { useUid } from '@verenig/shared/composables'
+            import '@verenig/shared/css/colors.css'
+            ```
+          draft: false
+          prerelease: false
+
+      - name: Setup npm authentication
+        if: steps.should-release.outputs.should_release == 'true'
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Publish to npm
+        if: steps.should-release.outputs.should_release == 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Notify success
+        if: steps.should-release.outputs.should_release == 'true'
+        run: |
+          echo "🎉 Package @verenig/shared@${{ steps.version.outputs.new_version }} published successfully!"
+          echo "📦 Version: ${{ steps.version.outputs.old_version }} → ${{ steps.version.outputs.new_version }}"
+          echo "🔄 Type: ${{ steps.version-type.outputs.version_type }}"

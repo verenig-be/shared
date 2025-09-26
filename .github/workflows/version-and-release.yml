@@ -1,0 +1,85 @@
+name: Version and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Configure git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Run verification checks
+        run: |
+          bunx tsc --noEmit
+          echo "✅ All checks passed"
+
+      - name: Bump version
+        id: version
+        run: |
+          npm version ${{ github.event.inputs.version_type }}
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Push version commit and tag
+        run: |
+          git push origin main --follow-tags
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.new_version }}
+          release_name: Release v${{ steps.version.outputs.new_version }}
+          body: |
+            ## Changes
+            
+            Auto-generated release for version ${{ steps.version.outputs.new_version }}
+            
+            ## Installation
+            
+            ```bash
+            bun add @verenig/shared@${{ steps.version.outputs.new_version }}
+            ```
+            
+            ## Usage
+            
+            ```javascript
+            import { Field } from '@verenig/shared/components'
+            import { useUid } from '@verenig/shared/composables'
+            import '@verenig/shared/css/colors.css'
+            ```
+          draft: false
+          prerelease: false

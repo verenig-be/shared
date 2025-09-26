@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - '.github/**'
+      - 'README.md'
+      - 'AGENTS.md'
+      - '.gitignore'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run type checking
+        run: bunx tsc --noEmit
+
+      - name: Run tests
+        run: |
+          if find . -name "*.test.*" -o -name "*.spec.*" | grep -q .; then
+            bun test
+          else
+            echo "ℹ️  No test files found"
+          fi
+
+      - name: Validate package structure
+        run: |
+          echo "📦 Validating package structure..."
+          if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
+          if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
+          if [ ! -d "vue" ]; then echo "❌ No Vue directory found"; exit 1; fi
+          if [ ! -d "css" ]; then echo "❌ No CSS directory found"; exit 1; fi
+          echo "✅ Package structure validated"
+
+      - name: Dry run publish
+        run: npm publish --dry-run --access public

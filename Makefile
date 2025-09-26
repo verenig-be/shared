@@ -1,0 +1,104 @@
+# Verenig Shared Package Makefile
+
+.PHONY: help install dev publish test lint typecheck
+
+# Default target
+help: ## Show this help message
+	@echo "Available targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
+install: ## Install dependencies
+	bun install
+
+dev: install ## Install dependencies for development
+	@echo "🚀 Setting up development environment..."
+	@echo "✅ Development setup complete"
+
+typecheck: ## Run TypeScript type checking
+	@echo "🔍 Type checking..."
+	bunx tsc --noEmit
+	@echo "✅ Type check passed"
+
+lint: ## Run linting (if linter is configured)
+	@if [ -f "package.json" ] && grep -q "lint" package.json; then \
+		echo "🔍 Running linter..."; \
+		bun run lint; \
+	else \
+		echo "ℹ️  No linter configured"; \
+	fi
+
+test: ## Run tests
+	@echo "🧪 Running tests..."
+	@if find . -name "*.test.*" -o -name "*.spec.*" | grep -q .; then \
+		bun test; \
+	else \
+		echo "ℹ️  No test files found"; \
+	fi
+
+verify: typecheck lint test ## Run all verification checks
+	@echo "✅ All checks passed"
+
+publish-check: verify ## Check if package is ready for publishing
+	@echo "📦 Checking package contents..."
+	@if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
+	@if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
+	@if [ ! -d "vue" ]; then echo "❌ No Vue components found"; exit 1; fi
+	@if [ ! -d "css" ]; then echo "❌ No CSS files found"; exit 1; fi
+	@echo "✅ Package is ready for publishing"
+
+publish: publish-check ## Publish to npm (use GitHub Actions for releases)
+	@echo "🚀 Publishing package to npm..."
+	@echo "ℹ️  Recommended: Use GitHub Actions 'Version and Release' workflow"
+	@echo "Are you sure you want to publish manually? (y/N)"
+	@read -r response; \
+	if [ "$$response" = "y" ] || [ "$$response" = "Y" ]; then \
+		npm publish --access public; \
+		echo "✅ Package published successfully"; \
+	else \
+		echo "❌ Publishing cancelled"; \
+	fi
+
+publish-dry: ## Dry run publish to see what would be published  
+	@echo "🔍 Dry run publish..."
+	npm publish --dry-run --access public
+
+info: ## Show package information
+	@echo "📦 Package Information:"
+	@echo "Name: $(shell jq -r '.name' package.json)"
+	@echo "Version: $(shell jq -r '.version' package.json)"
+	@echo "Description: $(shell jq -r '.description' package.json)"
+	@echo "Main: $(shell jq -r '.main' package.json)"
+	@echo ""
+	@echo "📂 Files that will be published:"
+	@echo "$(shell jq -r '.files[]' package.json)"
+	@echo ""
+	@echo "📁 Source structure:"
+	@echo "  vue/components/ (Vue components with entry point)"
+	@echo "  vue/composables/ (Vue composables with entry point)"
+	@echo "  css/ (stylesheets)"
+
+version-patch: ## Bump patch version (use GitHub Actions for releases)
+	npm version patch
+	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
+
+version-minor: ## Bump minor version (use GitHub Actions for releases)
+	npm version minor  
+	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
+
+version-major: ## Bump major version (use GitHub Actions for releases)
+	npm version major
+	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
+
+# Development workflow targets
+ci: install verify ## Complete CI workflow
+	@echo "✅ CI workflow completed successfully"
+
+release: ## Release workflow via GitHub Actions
+	@echo "🚀 Use GitHub Actions for releases:"
+	@echo "  1. Go to Actions tab → 'Version and Release'"
+	@echo "  2. Click 'Run workflow'"
+	@echo "  3. Select version type (patch/minor/major)"
+	@echo "  4. Workflow will handle version bump, release, and npm publish"

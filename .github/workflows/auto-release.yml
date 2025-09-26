@@ -71,7 +71,7 @@ jobs:
           echo "Branch name: $BRANCH_NAME"
           echo "Commit message: $COMMIT_MSG"
           echo "Version type: $VERSION_TYPE"
-          echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "version_type=$VERSION_TYPE" >> "$GITHUB_OUTPUT"
 
       - name: Configure git
         run: |
@@ -85,9 +85,9 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%B)
           if [[ "$COMMIT_MSG" == *"chore(release):"* ]] || [[ "$COMMIT_MSG" == *"bump version"* ]]; then
             echo "Skipping release - this is a version bump commit"
-            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
           else
-            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Bump version
@@ -98,8 +98,8 @@ jobs:
           npm version ${{ steps.version-type.outputs.version_type }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           
-          echo "old_version=$OLD_VERSION" >> $GITHUB_OUTPUT
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "old_version=$OLD_VERSION" >> "$GITHUB_OUTPUT"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           echo "Bumped version: $OLD_VERSION → $NEW_VERSION (${{ steps.version-type.outputs.version_type }})"
 
       - name: Commit version bump
@@ -116,12 +116,10 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.should-release.outputs.should_release == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.new_version }}
-          release_name: Release v${{ steps.version.outputs.new_version }}
+          name: Release v${{ steps.version.outputs.new_version }}
           body: |
             ## 🚀 Release v${{ steps.version.outputs.new_version }}
             

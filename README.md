@@ -172,6 +172,15 @@ If you need manual control:
 Set up this GitHub repository secret:
 - `NPM_TOKEN`: Your npm access token with publish permissions
 
+#### Setting up NPM_TOKEN:
+1. Go to [npmjs.com](https://www.npmjs.com/) → Account → Access Tokens
+2. Generate a new token with "Automation" type (allows publishing)
+3. Copy the token
+4. Go to your GitHub repository → Settings → Secrets and variables → Actions
+5. Add new repository secret:
+   - **Name**: `NPM_TOKEN`
+   - **Value**: Your npm token
+
 ### 🛡️ Safety Features
 - Skips release if commit is already a version bump
 - Full validation before publishing

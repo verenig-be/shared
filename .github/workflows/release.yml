@@ -30,8 +30,21 @@ jobs:
           bunx tsc --noEmit
           echo "✅ Type checking passed"
           
-      - name: Setup npm authentication
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Check NPM token
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "❌ NPM_TOKEN secret is not set"
+            echo "Please add NPM_TOKEN secret to repository settings"
+            exit 1
+          else
+            echo "✅ NPM_TOKEN secret is available"
+          fi
+
+      - name: Setup Node.js with npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Publish to npm
         run: npm publish --access public

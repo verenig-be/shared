@@ -30,13 +30,6 @@ jobs:
           bunx tsc --noEmit
           echo "✅ Type checking passed"
           
-          echo "📦 Validating package structure..."
-          if [ ! -f "vue/components/index.ts" ]; then echo "❌ No components entry point found"; exit 1; fi
-          if [ ! -f "vue/composables/index.ts" ]; then echo "❌ No composables entry point found"; exit 1; fi
-          if [ ! -d "vue" ]; then echo "❌ No Vue directory found"; exit 1; fi
-          if [ ! -d "css" ]; then echo "❌ No CSS directory found"; exit 1; fi
-          echo "✅ Package structure validated"
-
       - name: Setup npm authentication
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 

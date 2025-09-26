@@ -6,6 +6,21 @@
   "module": "index.ts", 
   "types": "index.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "types": "./index.ts"
+    },
+    "./components": {
+      "import": "./vue/components/index.ts",
+      "types": "./vue/components/index.ts"
+    },
+    "./composables": {
+      "import": "./vue/composables/index.ts",
+      "types": "./vue/composables/index.ts"
+    },
+    "./css/*": "./css/*"
+  },
   "files": [
     "index.ts",
     "vue",

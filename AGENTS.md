@@ -1,106 +1,135 @@
+# @verenig/shared Development Guidelines
 
-Default to using Bun instead of Node.js.
+This document contains development guidelines specific to the @verenig/shared package.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+## Package Philosophy
 
-## APIs
+This is a **source distribution** package:
+- No build step required
+- Source files are distributed directly to consumers
+- Consuming projects handle their own compilation
+- Maximum flexibility for different project setups
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+## Development Tools
+
+Use **Bun** as the primary runtime and package manager:
+
+```bash
+# Package management
+bun install                    # Install dependencies
+bun add <package>             # Add dependency
+bun remove <package>          # Remove dependency
+
+# Development
+bun run <script>              # Run package scripts
+make dev                      # Setup development environment
+make typecheck               # Type checking
+make verify                  # Run all checks
+```
+
+## Project Structure
+
+```
+@verenig/shared/
+├── index.ts                 # Main entry point - exports all components/composables
+├── vue/
+│   ├── components/          # Vue SFC components
+│   │   └── *.vue           # Individual components
+│   └── composables/         # Vue composition functions
+│       └── *.ts            # TypeScript composables
+├── css/
+│   └── *.css               # Stylesheets (imported directly by consumers)
+├── package.json            # Package configuration
+├── tsconfig.json           # TypeScript configuration
+├── vue-shims.d.ts          # Vue TypeScript declarations
+└── Makefile               # Development commands
+```
+
+## Adding New Components
+
+1. **Vue Components**: Add to `vue/components/`
+   - Use TypeScript with `<script setup lang="ts">`
+   - Include proper TypeScript interfaces for props
+   - Use accessibility best practices
+   - Import and use existing composables when appropriate
+
+2. **Composables**: Add to `vue/composables/`
+   - Export as named functions
+   - Use proper TypeScript types
+   - Follow Vue composition API patterns
+   - Include JSDoc comments for documentation
+
+3. **Update Exports**: Add to `index.ts`
+   ```ts
+   // Add component
+   import NewComponent from './vue/components/NewComponent.vue';
+   
+   // Add composable  
+   import { useNewFeature } from './vue/composables/useNewFeature';
+   
+   // Export in default object and as named export
+   export default {
+     components: { NewComponent },
+     composables: { useNewFeature }
+   };
+   
+   export { NewComponent };
+   ```
+
+## CSS Guidelines
+
+- Use CSS custom properties for theming
+- Follow the existing color system naming convention
+- Include fallbacks for older browsers when using modern CSS features
+- Keep styles modular and component-focused
+
+## TypeScript
+
+- All source files should be TypeScript
+- Use strict type checking
+- Provide proper interfaces for component props
+- Export types when they might be useful to consumers
 
 ## Testing
 
-Use `bun test` to run tests.
+```bash
+# Run tests (when added)
+bun test
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
-
-test("hello world", () => {
-  expect(1).toBe(1);
-});
+# Or via Makefile
+make test
 ```
 
-## Frontend
+Test files should follow the pattern: `*.test.ts` or `*.spec.ts`
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+## Publishing Workflow
 
-Server:
+1. Make changes to source files
+2. Run verification: `make verify`
+3. Update version: `make version-patch` (or `version-minor`/`version-major`)
+4. Publish: `make publish`
 
-```ts#index.ts
-import index from "./index.html"
+## Consumer Integration
 
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
+Consuming Vue projects should be able to:
+
+```vue
+<script setup>
+// Import components directly
+import { Field } from '@verenig/shared'
+
+// Import composables
+import { useUid } from '@verenig/shared'
+
+// Import CSS
+import '@verenig/shared/css/colors.css'
+</script>
 ```
 
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
+## Key Principles
 
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-
-// import .css files directly and it works
-import './index.css';
-
-import { createRoot } from "react-dom/client";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+- **Source First**: Distribute TypeScript and Vue source files
+- **Consumer Flexibility**: Let consuming projects handle compilation
+- **Type Safety**: Provide full TypeScript support through source files
+- **Simplicity**: No complex build pipeline
+- **Vue Ecosystem**: Designed specifically for Vue 3+ projects

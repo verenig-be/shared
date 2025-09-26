@@ -4,24 +4,20 @@
   "description": "Shared utilities and components for Verenig projects",
   "main": "index.ts",
   "module": "index.ts", 
-  "types": "dist/index.d.ts",
+  "types": "index.ts",
   "type": "module",
   "files": [
     "index.ts",
     "vue",
-    "css",
-    "dist/*.d.ts"
+    "css"
   ],
-  "scripts": {
-    "build": "tsc --project tsconfig.build.json",
-    "prepublishOnly": "bun run build"
-  },
+  "scripts": {},
   "keywords": ["verenig", "shared", "utilities", "vue", "typescript"],
-  "author": "Your Name",
+  "author": "Korneel Eeckhout",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/verenig-shared.git"
+    "url": "https://github.com/verenig-be/shared.git"
   },
   "devDependencies": {
     "@types/bun": "latest",

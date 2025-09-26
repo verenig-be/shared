@@ -1,6 +1,6 @@
 # Verenig Shared Package Makefile
 
-.PHONY: help build clean install dev publish test lint typecheck
+.PHONY: help install dev publish test lint typecheck
 
 # Default target
 help: ## Show this help message
@@ -10,18 +10,8 @@ help: ## Show this help message
 install: ## Install dependencies
 	bun install
 
-clean: ## Clean build artifacts
-	rm -rf dist/
-	@echo "✅ Cleaned build artifacts"
-
-build: clean ## Generate TypeScript declarations
-	@echo "📝 Generating TypeScript declarations..."
-	bun run build
-	@echo "✅ Type declarations generated"
-
-dev: install ## Install dependencies and build in development mode
+dev: install ## Install dependencies for development
 	@echo "🚀 Setting up development environment..."
-	$(MAKE) build
 	@echo "✅ Development setup complete"
 
 typecheck: ## Run TypeScript type checking
@@ -48,10 +38,9 @@ test: ## Run tests
 verify: typecheck lint test ## Run all verification checks
 	@echo "✅ All checks passed"
 
-publish-check: build verify ## Check if package is ready for publishing
+publish-check: verify ## Check if package is ready for publishing
 	@echo "📦 Checking package contents..."
 	@if [ ! -f "index.ts" ]; then echo "❌ No main entry file found"; exit 1; fi
-	@if [ ! -f "dist/index.d.ts" ]; then echo "❌ No type declarations found"; exit 1; fi
 	@if [ ! -d "vue" ]; then echo "❌ No Vue components found"; exit 1; fi
 	@if [ ! -d "css" ]; then echo "❌ No CSS files found"; exit 1; fi
 	@echo "✅ Package is ready for publishing"
@@ -67,7 +56,7 @@ publish: publish-check ## Publish to npm (with confirmation)
 		echo "❌ Publishing cancelled"; \
 	fi
 
-publish-dry: build ## Dry run publish to see what would be published  
+publish-dry: ## Dry run publish to see what would be published  
 	@echo "🔍 Dry run publish..."
 	npm publish --dry-run --access public
 
@@ -85,7 +74,6 @@ info: ## Show package information
 	@echo "  index.ts (main entry point)"
 	@echo "  vue/ (Vue components and composables)"
 	@echo "  css/ (stylesheets)"
-	@echo "  dist/ (TypeScript declarations)"
 
 version-patch: ## Bump patch version
 	npm version patch
@@ -100,8 +88,8 @@ version-major: ## Bump major version
 	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
 
 # Development workflow targets
-ci: install build verify ## Complete CI workflow
+ci: install verify ## Complete CI workflow
 	@echo "✅ CI workflow completed successfully"
 
-release: version-patch build publish ## Release workflow: bump patch, build, and publish
+release: version-patch publish ## Release workflow: bump patch and publish
 	@echo "🎉 Release completed"

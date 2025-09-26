@@ -205,12 +205,36 @@ This package follows a **source distribution** approach:
 
 ## Contributing
 
-1. Make changes to source files in `vue/`, `css/`, or `index.ts`
+1. Make changes to source files in `vue/` or `css/`
 2. Run `make verify` to ensure all checks pass
-3. Update version with `make version-patch` (or `version-minor`/`version-major`)
-4. Publish with `make publish`
+3. Commit and push your changes
+4. Create a release using GitHub Actions (see Deployment section)
 
 No build step required - source files are distributed directly!
+
+## Deployment
+
+This package uses GitHub Actions for automated deployment to npm:
+
+### Automatic CI
+- **Pull requests**: Run tests and validation
+- **Push to main**: Run full CI pipeline with dry-run publish
+
+### Manual Release
+1. Go to GitHub Actions → "Version and Release" workflow
+2. Click "Run workflow" and select version bump type:
+   - **patch**: Bug fixes (1.0.0 → 1.0.1)
+   - **minor**: New features (1.0.0 → 1.1.0)  
+   - **major**: Breaking changes (1.0.0 → 2.0.0)
+3. The workflow will:
+   - Bump version in package.json
+   - Create git tag and commit
+   - Create GitHub release
+   - Automatically publish to npm
+
+### Requirements
+Set up these GitHub repository secrets:
+- `NPM_TOKEN`: Your npm access token with publish permissions
 
 ## License
 

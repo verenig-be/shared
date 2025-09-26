@@ -46,9 +46,10 @@ publish-check: verify ## Check if package is ready for publishing
 	@if [ ! -d "css" ]; then echo "❌ No CSS files found"; exit 1; fi
 	@echo "✅ Package is ready for publishing"
 
-publish: publish-check ## Publish to npm (with confirmation)
+publish: publish-check ## Publish to npm (use GitHub Actions for releases)
 	@echo "🚀 Publishing package to npm..."
-	@echo "Are you sure you want to publish? (y/N)"
+	@echo "ℹ️  Recommended: Use GitHub Actions 'Version and Release' workflow"
+	@echo "Are you sure you want to publish manually? (y/N)"
 	@read -r response; \
 	if [ "$$response" = "y" ] || [ "$$response" = "Y" ]; then \
 		npm publish --access public; \
@@ -76,21 +77,28 @@ info: ## Show package information
 	@echo "  vue/composables/ (Vue composables with entry point)"
 	@echo "  css/ (stylesheets)"
 
-version-patch: ## Bump patch version
+version-patch: ## Bump patch version (use GitHub Actions for releases)
 	npm version patch
 	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
 
-version-minor: ## Bump minor version
+version-minor: ## Bump minor version (use GitHub Actions for releases)
 	npm version minor  
 	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
 
-version-major: ## Bump major version
+version-major: ## Bump major version (use GitHub Actions for releases)
 	npm version major
 	@echo "✅ Version bumped to $(shell jq -r '.version' package.json)"
+	@echo "ℹ️  For releases, use GitHub Actions 'Version and Release' workflow"
 
 # Development workflow targets
 ci: install verify ## Complete CI workflow
 	@echo "✅ CI workflow completed successfully"
 
-release: version-patch publish ## Release workflow: bump patch and publish
-	@echo "🎉 Release completed"
+release: ## Release workflow via GitHub Actions
+	@echo "🚀 Use GitHub Actions for releases:"
+	@echo "  1. Go to Actions tab → 'Version and Release'"
+	@echo "  2. Click 'Run workflow'"
+	@echo "  3. Select version type (patch/minor/major)"
+	@echo "  4. Workflow will handle version bump, release, and npm publish"

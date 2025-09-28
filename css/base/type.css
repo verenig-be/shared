@@ -1,0 +1,39 @@
+html {
+  font-size: 100%;
+  line-height: 1.6;
+  scroll-padding: var(--space-l);
+  font-family: var(--ff-sans);
+}
+
+body {
+  font-size: var(--fsize-s);
+  color: var(--clr-text-main);
+  background-color: var(--clr-bg-main);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+}
+
+h1 {
+  font-size: var(--fsize-4xl);
+}
+
+h2 {
+  font-size: var(--fsize-xl);
+}
+
+h3 {
+  font-size: var(--fsize-l);
+}
+
+h4 {
+  font-size: var(--fsize-m);
+}
+
+a {
+  color: var(--clr-text-link);
+}

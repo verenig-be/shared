@@ -83,6 +83,24 @@ make verify                  # Run all checks
 - Include fallbacks for older browsers when using modern CSS features
 - Keep styles modular and component-focused
 
+### CSS Variable Synchronization
+
+The following files must be kept in sync when CSS custom properties are added, modified, or removed:
+
+- **Source CSS files**: `css/base/colors.css` and `css/base/sizes.css`
+- **Editor snippets**: `.nvim/snippets/verenig.json`
+
+When adding new CSS custom properties:
+1. Add the variable to the appropriate CSS file in `css/base/`
+2. Add a corresponding snippet entry in `.nvim/snippets/verenig.json` with format:
+   ```json
+   "--variable-name": {
+     "body": "var(--variable-name)"
+   }
+   ```
+
+This ensures editor autocompletion stays synchronized with available CSS variables.
+
 ## TypeScript
 
 - All source files should be TypeScript

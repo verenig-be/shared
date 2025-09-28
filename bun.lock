@@ -5,9 +5,9 @@
       "name": "shared",
       "devDependencies": {
         "@types/bun": "latest",
+        "typescript": "^5",
       },
       "peerDependencies": {
-        "typescript": "^5",
         "vue": "^3.5",
       },
     },

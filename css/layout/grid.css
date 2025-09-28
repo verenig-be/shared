@@ -1,0 +1,6 @@
+@layer layout {
+  .grid {
+    display: grid;
+    gap: var(--grid-gutter);
+  }
+}

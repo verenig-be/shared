@@ -1,13 +1,13 @@
 @layer base {
   :root {
-    --fsize--2: clamp(0.6944rem, 0.6605rem + 0.1508vw, 0.8rem);
-    --fsize--1: clamp(0.8333rem, 0.7798rem + 0.2381vw, 1rem);
-    --fsize-0: clamp(1rem, 0.9196rem + 0.3571vw, 1.25rem);
-    --fsize-1: clamp(1.2rem, 1.0835rem + 0.5179vw, 1.5625rem);
-    --fsize-2: clamp(1.44rem, 1.2751rem + 0.733vw, 1.9531rem);
-    --fsize-3: clamp(1.728rem, 1.4987rem + 1.0192vw, 2.4414rem);
-    --fsize-4: clamp(2.0736rem, 1.7592rem + 1.3974vw, 3.0518rem);
-    --fsize-5: clamp(2.4883rem, 2.062rem + 1.8948vw, 3.8147rem);
+    --fsize-2xs: clamp(0.6944rem, 0.6605rem + 0.1508vw, 0.8rem);
+    --fsize-xs: clamp(0.8333rem, 0.7798rem + 0.2381vw, 1rem);
+    --fsize-s: clamp(1rem, 0.9196rem + 0.3571vw, 1.25rem);
+    --fsize-m: clamp(1.2rem, 1.0835rem + 0.5179vw, 1.5625rem);
+    --fsize-l: clamp(1.44rem, 1.2751rem + 0.733vw, 1.9531rem);
+    --fsize-xl: clamp(1.728rem, 1.4987rem + 1.0192vw, 2.4414rem);
+    --fsize-2xl: clamp(2.0736rem, 1.7592rem + 1.3974vw, 3.0518rem);
+    --fsize-3xl: clamp(2.4883rem, 2.062rem + 1.8948vw, 3.8147rem);
 
     --space-3xs: clamp(0.25rem, 0.2303rem + 0.0877vw, 0.3125rem);
     --space-2xs: clamp(0.5rem, 0.4605rem + 0.1754vw, 0.625rem);

@@ -1,3 +1,10 @@
 @import 'colors.css';
 @import 'sizes.css';
+@import 'fonts.css';
+@import 'type.css';
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

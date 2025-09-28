@@ -36,4 +36,14 @@ h4 {
 
 a {
   color: var(--clr-text-link);
+
+  &:hover {
+    color: var(--clr-text-focus);
+  }
+
+  &:focus-visible {
+    color: var(--clr-text-focus);
+    outline-offset: 2px;
+    outline: 1px solid var(--clr-text-focus);
+  }
 }
